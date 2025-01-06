@@ -6,7 +6,7 @@ on:
 
 jobs:
   push_to_registry:
-    name: Push Docker image to Docker Hub
+    name: Push Docker image to ghcr
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -37,6 +37,7 @@ jobs:
           images: |
             ${{ github.repository_owner }}/${{ github.repository }}
           tags: |
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
