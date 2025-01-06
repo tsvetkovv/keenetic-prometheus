@@ -35,9 +35,9 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ github.repository_owner }}/${{ github.repository }}
+            ${{ github.repository }}
           tags: |
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
