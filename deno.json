@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "start": "deno run --allow-read=.env,config/metrics.yaml,data,data/.cookies.json --allow-write=data,data/.cookies.json --allow-env=KEENETIC_HOST,KEENETIC_USERNAME,KEENETIC_PASSWORD,LOG_TOKENS,LOG_STREAM,METRICS_PORT,METRICS_HOST --allow-net main.ts"
+  },
+  "imports": {
+    "prom-client": "npm:prom-client",
+    "yaml": "npm:yaml"
+  }
+}

@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    user: deno
+    ports:
+      - "9991:9991"
+    env_file:
+      - .env
+    volumes:
+      - deno-data:/app/data
+      - ./config:/app/config # should contain metrics.yaml
+
+volumes:
+  deno-data:
