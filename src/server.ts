@@ -1,9 +1,9 @@
-import { KeeneticClient } from "./keenetic-api.ts";
+import "jsr:@std/dotenv/load";
+import { Counter, Gauge, Registry } from "prom-client";
 import { parse as parseYaml } from "yaml";
+import { KeeneticClient } from "./keenetic-api.ts";
 import { MetricsCollector } from "./metrics-config.ts";
 import { getEnvOrThrow } from "./utils.ts";
-import { Counter, Gauge, Registry } from "prom-client";
-import "jsr:@std/dotenv/load";
 
 // Load environment variables
 const KEENETIC_HOST = getEnvOrThrow("KEENETIC_HOST");
@@ -39,25 +39,14 @@ async function updateMetrics() {
 
       // Create metric if it doesn't exist
       if (!prometheusMetrics[name]) {
-        if (data.type === "gauge") {
-          prometheusMetrics[name] = new Gauge({
-            name,
-            help: String(data.help),
-            labelNames: data.values
-              ? Object.keys(data.values[0]?.labels || {})
-              : [],
-            registers: [register],
-          });
-        } else if (data.type === "counter") {
-          prometheusMetrics[name] = new Counter({
-            name,
-            help: String(data.help),
-            labelNames: data.values
-              ? Object.keys(data.values[0]?.labels || {})
-              : [],
-            registers: [register],
-          });
-        }
+        prometheusMetrics[name] = new Gauge({
+          name,
+          help: String(data.help),
+          labelNames: data.values
+            ? Object.keys(data.values[0]?.labels || {})
+            : [],
+          registers: [register],
+        });
       }
 
       // Update metric values

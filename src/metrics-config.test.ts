@@ -62,6 +62,21 @@ Deno.test("MetricsCollector.evaluateArraySelector - filter by field existence", 
   ]);
 });
 
+Deno.test("MetricsCollector.evaluateArraySelector - filter by field existence", () => {
+  const metricsCollector = createMetricsCollector();
+  const result = metricsCollector.evaluateArraySelector(
+    testData,
+    "host",
+  );
+  assertEquals(result.length, 4);
+  assertEquals(result, [
+    { id: 1, active: true, ssid: "wifi1" },
+    { id: 2, active: false, ssid: "wifi2" },
+    { id: 3, active: true },
+    { id: 4 },
+  ]);
+});
+
 Deno.test("MetricsCollector.evaluateArraySelector - handle non-existent array field", () => {
   const metricsCollector = createMetricsCollector();
   const result = metricsCollector.evaluateArraySelector(

@@ -3,7 +3,6 @@ import { KeeneticClient } from "./keenetic-api.ts";
 export interface MetricDefinition {
   name: string;
   field?: string;
-  type: "gauge" | "counter";
   help: string;
   labels?: string[];
   array_selector?: string;
@@ -71,7 +70,6 @@ interface MetricValue {
 }
 
 interface MetricData {
-  type: "gauge" | "counter";
   help: string;
   values?: MetricValue[];
   value?: number;
@@ -104,6 +102,7 @@ export class MetricsCollector {
         }
 
         for (const metric of groupConfig.metrics) {
+
           if (metric.array_selector) {
             // Handle array-based metrics with labels
             const items = this.evaluateArraySelector(
@@ -115,7 +114,6 @@ export class MetricsCollector {
             if (!isArrayOfRecords(items)) continue;
 
             results[metricName] = {
-              type: metric.type,
               help: metric.help,
               values: items.map((item) => ({
                 labels: this.extractLabels(item, metric.labels || []),
@@ -133,7 +131,6 @@ export class MetricsCollector {
             const value = this.evaluateCalculation(data, metric.calculate);
             results[`keenetic_${groupName}_${metric.name}`] = {
               value,
-              type: metric.type,
               help: metric.help,
             };
           } else if (metric.field) {
@@ -146,7 +143,6 @@ export class MetricsCollector {
             );
             results[`keenetic_${groupName}_${metric.name}`] = {
               value,
-              type: metric.type,
               help: metric.help,
             };
           }
@@ -184,6 +180,11 @@ export class MetricsCollector {
     data: Record<string, unknown>,
     selector: string,
   ): unknown[] {
+    // First check if it's just a simple field name without conditions
+    if (/^\w+$/.test(selector)) {
+      return Array.isArray(data[selector]) ? data[selector] : [];
+    }
+
     // Parse selector in format "field[?condition]"
     const match = selector.match(/^(\w+)\[?\?(\w+)(?:===(.+?))?\]?$/);
     if (!match) {

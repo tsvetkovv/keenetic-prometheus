@@ -1,6 +1,6 @@
 services:
   app:
-    build: .
+    image: ghcr.io/tsvetkovv/keenetic-prometheus:latest
     user: deno
     ports:
       - "9991:9991"
